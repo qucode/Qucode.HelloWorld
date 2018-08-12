@@ -1,11 +1,19 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Quantum.Simulation.Core;
 using Microsoft.Quantum.Simulation.Simulators;
+using Microsoft.Quantum.Simulation.Simulators.QCTraceSimulators;
 
-namespace Qucode.HelloWorld.Bell
+namespace Qucode.HelloWorld.BellStates
 {
     class Driver
     {
+        /// <summary>
+        /// Whether to use the quantum trace simulator rather than the regular full state quantum 
+        /// simulator.
+        /// </summary>
+        private static bool useTraceSimulator = true;
+
         /// <summary>
         /// Creates the four Bell (maximally entangled two-qubit) states and measures the correlations 
         /// between the two qubits.
@@ -13,8 +21,16 @@ namespace Qucode.HelloWorld.Bell
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            using (var simulator = new QuantumSimulator())
+            using (var quantumSimulator = new QuantumSimulator())
             {
+                QCTraceSimulator traceSimulator = createTraceSimulator();
+                IOperationFactory simulator;
+
+                if (useTraceSimulator)
+                    simulator = traceSimulator;
+                else
+                    simulator = quantumSimulator;
+
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
                 Console.WriteLine("Puts two qubits in a Bell (maximally entangled) state, measuring " + 
                     "the first then checking if it correlates with the second. The Bell state is " + 
@@ -32,7 +48,7 @@ namespace Qucode.HelloWorld.Bell
 
                 foreach ((Result contolInitial, Result targetInitial, string expectedState) in initialValues)
                 {
-                    var result = BellTest.Run(simulator, 1000, contolInitial, targetInitial).Result;
+                    var result = MeasureStates.Run(simulator, 1000, contolInitial, targetInitial).Result;
                     var (numZeros, numOnes, agreements) = result;
                     Console.WriteLine($"Initialised with Q1 {contolInitial} Q2 {targetInitial}");
                     Console.WriteLine($"Expected Bell state: {expectedState}");
@@ -41,12 +57,26 @@ namespace Qucode.HelloWorld.Bell
                     Console.WriteLine();
                 }
 
+                if (useTraceSimulator)
+                    File.WriteAllText("Trace.csv", traceSimulator.ToCSV()[MetricsCountersNames.widthCounter]);
+
                 Console.WriteLine("The qubits (both measured in the Pauli Z basis) should correlate " + 
                     "perfectly, always giving either the same or opposite result when measured.");
                 Console.WriteLine();
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
             }
+        }
+
+        /// <summary>
+        /// Creates a quantum trace simulator.
+        /// </summary>
+        /// <returns></returns>
+        private static QCTraceSimulator createTraceSimulator()
+        {
+            var config = new QCTraceSimulatorConfiguration();
+            config.useWidthCounter = true;
+            return new QCTraceSimulator(config);
         }
     }
 }
