@@ -4,7 +4,7 @@ using Microsoft.Quantum.Simulation.Core;
 using Microsoft.Quantum.Simulation.Simulators;
 using Microsoft.Quantum.Simulation.Simulators.QCTraceSimulators;
 
-namespace Qucode.HelloWorld.BellStates
+namespace Quantum.Qucode.HelloWorld.BellStates
 {
     class Driver
     {
@@ -46,14 +46,14 @@ namespace Qucode.HelloWorld.BellStates
                     ( Result.One, Result.One, "|ψ-> = 1/√2 (|01> - |10>)" ),
                 };
 
-                foreach ((Result contolInitial, Result targetInitial, string expectedState) in initialValues)
+                foreach ((Result q1Initial, Result q2Initial, string expectedState) in initialValues)
                 {
-                    var result = MeasureStates.Run(simulator, 1000, contolInitial, targetInitial).Result;
-                    var (numZeros, numOnes, agreements) = result;
-                    Console.WriteLine($"Initialised with Q1 {contolInitial} Q2 {targetInitial}");
+                    var result = MeasureStates.Run(simulator, q1Initial, q2Initial, 1000).Result;
+                    var (zeroCount, oneCount, agreementCount) = result;
+                    Console.WriteLine($"Initialised with Q1 {q1Initial} Q2 {q2Initial}");
                     Console.WriteLine($"Expected Bell state: {expectedState}");
-                    Console.WriteLine($"Q1 measurements: Zeros={numZeros} Ones={numOnes}");
-                    Console.WriteLine($"Q2 measurements: Times the same as Q1={agreements}");
+                    Console.WriteLine($"Q1 measurements: Zeros={zeroCount} Ones={oneCount}");
+                    Console.WriteLine($"Q2 measurements: Times the same as Q1={agreementCount}");
                     Console.WriteLine();
                 }
 
@@ -61,7 +61,8 @@ namespace Qucode.HelloWorld.BellStates
                     File.WriteAllText("Trace.csv", traceSimulator.ToCSV()[MetricsCountersNames.widthCounter]);
 
                 Console.WriteLine("The qubits (both measured in the Pauli Z basis) should correlate " + 
-                    "perfectly, always giving either the same or opposite result when measured.");
+                    "perfectly, always giving either the same or the opposite result when measured " + 
+                    "depending on which Bell state they were in.");
                 Console.WriteLine();
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();

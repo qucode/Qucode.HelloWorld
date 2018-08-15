@@ -1,79 +1,79 @@
-﻿namespace Qucode.HelloWorld.BellStates
+﻿namespace Quantum.Qucode.HelloWorld.BellStates
 {
     open Microsoft.Quantum.Primitive;
     open Microsoft.Quantum.Canon;
 
 	/// # Summary
-	/// Puts two qubits in a Bell (maximally entangled) state then measures them, doing so a specified 
-	/// number of times. The Bell state is created by applying a Hadamard gate to the first qubit then 
-	/// a CNOT to them both using the first as a control. 
-	///
-	/// The number of times the control qubit is measured as Zero and the number of times it is measured
-	/// as a One are returned, along with the number of times the target qubit gives the same measurement 
-	/// as the control.
+	/// Puts two qubits in one of the four Bell (i.e. maximally entangled) states then measures them,
+	/// doing so a specified number of times. The Bell state is created by applying a Hadamard gate to
+	/// the first qubit then a CNOT to them both using the first as a control. The Bell state created
+	/// depends on the two qubits' initial values.
+	/// The number of times the first qubit is measured as Zero and the number of times it is measured
+	/// as a One are returned, along with the number of times the second qubit gives the same measurement 
+	/// as the first.
 	///
 	/// # Input
-	/// ## count
-	/// The number of times to repeat the operation.
-	/// ## controlInitial
-	/// The state we want the control qubit in before entangling it.
-	/// ## targetInitial
-	/// The state we want the target qubit in before entangling it.
+	/// ## q1Initial
+	/// The state we want the first qubit in before entangling it.
+	/// ## q2Initial
+	/// The state we want the second qubit in before entangling it.
+	/// ## repeats
+	/// The number of times to repeat the entanglement and measurement.
 	///
 	/// # Output
-	/// ## numZeros
-	/// Number of times the control qubit is measured as Zero.
-	/// ## numOnes
-	/// Number of times the control qubit is measured as One.
-	/// ## agreements
-	/// Number of times the target qubit gives the same measurement as the control qubit.
-	operation MeasureStates(count: Int, controlInitial: Result, targetInitial: Result) : (Int, Int, Int)
+	/// ## zeroCount
+	/// Number of times the first qubit is measured as Zero.
+	/// ## oneCount
+	/// Number of times the first qubit is measured as One.
+	/// ## agreementCount
+	/// Number of times the second qubit gives the same measurement as the first qubit.
+	operation MeasureStates(q1Initial: Result, q2Initial: Result, repeats: Int) : (Int, Int, Int)
 	{
 		body
 		{
-			mutable numOnes = 0;
-			mutable agreements = 0;
+			mutable oneCount = 0;
+			mutable agreementCount = 0;
 
 			using (qubits = Qubit[2])
 			{
-				let controlQubit = qubits[0];
-				let targetQubit = qubits[1];
+				let q1 = qubits[0];
+				let q2 = qubits[1];
 
-				for (i in 1..count)
+				for (i in 1..repeats)
 				{
-					Set(controlQubit, controlInitial);
-					Set(targetQubit, targetInitial);
+					Set(q1, q1Initial);
+					Set(q2, q2Initial);
 
 					// Maps |0> to 1/√2 (|0> + |1>) and |1> to 1/√2 (|0> - |1>) creating an equal superposition
-					H(controlQubit);
+					H(q1);
 
-					// Flips the second qubit based on the first's value, meaning both are now in an entangled superposition
-					CNOT(controlQubit, targetQubit);
+					// Flip the second qubit based on the first's value, both are now in an entangled superposition
+					CNOT(q1, q2);
 					
-					AssertProb([PauliZ], [controlQubit], Zero, 0.5, "Outcomes must be equally likely.", 1e-5);
-					let controlResult = M(controlQubit);
+					// Measure the qubits, the asserts allow this to be run by the quantum trace simulator
+					AssertProb([PauliZ], [q1], Zero, 0.5, "Outcomes must be equally likely.", 1e-5);
+					let q1Result = M(q1);
 
-					AssertProb([PauliZ], [targetQubit], controlResult, CorrelationProbability(targetInitial), "Qubits must be correlated.", 1e-5);
-					let targetResult = M(targetQubit);
+					AssertProb([PauliZ], [q2], q1Result, CorrelationProbability(q2Initial), "Qubits must be correlated.", 1e-5);
+					let q2Result = M(q2);
 
-					// Count the number of Ones we see:
-					if (controlResult == One)
+					// Count the number of times the first qubit is measured as One
+					if (q1Result == One)
 					{
-						set numOnes = numOnes + 1;
+						set oneCount = oneCount + 1;
 					}
 
-					// Count the number of times the control and target measurements agree
-					if (targetResult == controlResult)
+					// Count the number of times the first and second qubits are measured with the same result
+					if (q2Result == q1Result)
 					{
-						set agreements = agreements + 1;
+						set agreementCount = agreementCount + 1;
 					}
 				}
 
 				SetAll(qubits, Zero);
 			}
 
-			// Return number of times we saw a |0> and number of times we saw a |1>
-			return (count - numOnes, numOnes, agreements);
+			return (repeats - oneCount, oneCount, agreementCount);
 		}
 	}
 
@@ -118,20 +118,20 @@
 	}
 
 	/// # Summary
-	/// Finds the probability of the target qubit being measured in the same state as the control 
+	/// Finds the probability of the second qubit being measured in the same state as the first 
 	/// qubit. For use with the quantum trace simulator.
 	///
 	/// # Input
-	/// ## targetInitial
-	/// The state of the target qubit before it is entangled.
+	/// ## q2Initial
+	/// The state of the second qubit before it is entangled.
 	///
 	/// # Output
 	/// ## correlationProbability
-	/// Either 1 or 0 since the two qubits are maximally entangled (100% chance of them giving the 
-	/// same or the opposite result when measured in the same basis).
-	function CorrelationProbability(targetInitial: Result) : (Double)
+	/// Either 1 or 0 since the two qubits are maximally entangled (100% chance of them giving either 
+	/// the same or the opposite result when measured in the same basis depending on the Bell state).
+	function CorrelationProbability(q2Initial: Result) : (Double)
 	{
-		if (targetInitial == One)
+		if (q2Initial == One)
 		{
 			return 0.0;
 		}
