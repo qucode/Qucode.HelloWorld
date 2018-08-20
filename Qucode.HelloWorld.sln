@@ -11,7 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qucode.HelloWorld.DeutschOr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qucode.HelloWorld.Teleportation", "Qucode.HelloWorld.Teleportation\Qucode.HelloWorld.Teleportation.csproj", "{CDD259EA-FECC-4AF0-833C-BFE8D14B67ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qucode.HelloWorld.Common", "Qucode.HelloWorld.Common\Qucode.HelloWorld.Common.csproj", "{CC019FCE-CA6C-4EE4-809E-55C42F10944A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qucode.HelloWorld.Common", "Qucode.HelloWorld.Common\Qucode.HelloWorld.Common.csproj", "{CC019FCE-CA6C-4EE4-809E-55C42F10944A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C3BE9250-29FC-4036-9C43-5DDC19982256}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -25,12 +25,12 @@ namespace Quantum.Qucode.HelloWorld.BellStates
             {
                 QCTraceSimulator traceSimulator = CreateTraceSimulator();
                 IOperationFactory simulator;
-
+                
                 if (useTraceSimulator)
                     simulator = traceSimulator;
                 else
                     simulator = quantumSimulator;
-
+                
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
                 Console.WriteLine("Puts two qubits in a Bell (maximally entangled) state, measuring " + 
