@@ -12,7 +12,7 @@ namespace Quantum.Qucode.HelloWorld.BellStates
         /// Whether to use the quantum trace simulator rather than the regular full state quantum 
         /// simulator.
         /// </summary>
-        private static bool useTraceSimulator = true;
+        private static readonly bool useTraceSimulator = true;
 
         /// <summary>
         /// Creates the four Bell (maximally entangled two-qubit) states and measures the correlations 
@@ -23,7 +23,7 @@ namespace Quantum.Qucode.HelloWorld.BellStates
         {
             using (var quantumSimulator = new QuantumSimulator())
             {
-                QCTraceSimulator traceSimulator = createTraceSimulator();
+                QCTraceSimulator traceSimulator = CreateTraceSimulator();
                 IOperationFactory simulator;
 
                 if (useTraceSimulator)
@@ -32,6 +32,7 @@ namespace Quantum.Qucode.HelloWorld.BellStates
                     simulator = quantumSimulator;
 
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
+
                 Console.WriteLine("Puts two qubits in a Bell (maximally entangled) state, measuring " + 
                     "the first then checking if it correlates with the second. The Bell state is " + 
                     "created by applying a Hadamard gate to the first qubit then a CNOT to them both " + 
@@ -48,7 +49,7 @@ namespace Quantum.Qucode.HelloWorld.BellStates
 
                 foreach ((Result q1Initial, Result q2Initial, string expectedState) in initialValues)
                 {
-                    var result = MeasureStates.Run(simulator, q1Initial, q2Initial, 1000).Result;
+                    var result = MeasureBellStates.Run(simulator, q1Initial, q2Initial, 1000).Result;
                     var (zeroCount, oneCount, agreementCount) = result;
                     Console.WriteLine($"Initialised with Q1 {q1Initial} Q2 {q2Initial}");
                     Console.WriteLine($"Expected Bell state: {expectedState}");
@@ -73,10 +74,12 @@ namespace Quantum.Qucode.HelloWorld.BellStates
         /// Creates a quantum trace simulator.
         /// </summary>
         /// <returns></returns>
-        private static QCTraceSimulator createTraceSimulator()
+        private static QCTraceSimulator CreateTraceSimulator()
         {
-            var config = new QCTraceSimulatorConfiguration();
-            config.useWidthCounter = true;
+            var config = new QCTraceSimulatorConfiguration
+            {
+                useWidthCounter = true
+            };
             return new QCTraceSimulator(config);
         }
     }

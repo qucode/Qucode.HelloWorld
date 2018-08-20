@@ -4,7 +4,9 @@
     open Microsoft.Quantum.Canon;
 
 	/// # Summary
-	/// The output qubit is always changed to a state of |0> no matter the state of the input qubit. 
+	/// A constant implementation of the Deutsch Oracle (gives the same output for every input).
+	/// Accepts an input and an output qubit, the output qubit is always changed to a state of |0> 
+	/// no matter the state of the input qubit. 
 	///
 	/// # Input
 	/// ## input
@@ -12,7 +14,7 @@
 	/// ## output
 	/// A qubit to be given the Oracle's output state (i.e. f(x)). 
 	/// It is assumed that the qubit has a state of |0> to begin with.
-    operation ConstantZero (input: Qubit, output: Qubit) : ()
+    operation DeutschConstantZero (input: Qubit, output: Qubit) : ()
     {
         body
         {
@@ -21,7 +23,9 @@
     }
 
 	/// # Summary
-	/// The output qubit is always changed to a state of |1> no matter the state of the input qubit. 
+	/// A constant implementation of the Deutsch Oracle (gives the same output for every input).
+	/// Accepts an input and an output qubit, the output qubit is always changed to a state of |1> 
+	/// no matter the state of the input qubit. 
 	///
 	/// # Input
 	/// ## input
@@ -29,7 +33,7 @@
 	/// ## output
 	/// A qubit to be given the Oracle's output state (i.e. f(x)). 
 	/// It is assumed that the qubit has a state of |0> to begin with.
-    operation ConstantOne (input: Qubit, output: Qubit) : ()
+    operation DeutschConstantOne (input: Qubit, output: Qubit) : ()
     {
         body
         {
@@ -38,7 +42,9 @@
     }
 
 	/// # Summary
-	/// The output qubit is always changed to the same state of as the input qubit. 
+	/// A balanced implementation of the Deutsch Oracle (gives an output of |0> for half of its input 
+	/// values and |1> for the other half). Accepts an input and an output qubit, the output qubit is 
+	/// always changed to the same state as the input qubit. 
 	///
 	/// # Input
 	/// ## input
@@ -46,7 +52,7 @@
 	/// ## output
 	/// A qubit to be given the Oracle's output state (i.e. f(x)). 
 	/// It is assumed that the qubit has a state of |0> to begin with.
-    operation BalancedIdentity (input: Qubit, output: Qubit) : ()
+    operation DeutschBalancedIdentity (input: Qubit, output: Qubit) : ()
     {
         body
         {
@@ -55,7 +61,9 @@
     }
 
 	/// # Summary
-	/// The output qubit is always changed to the negated state of as the input qubit. 
+	/// A balanced implementation of the Deutsch Oracle (gives an output of |0> for half of its input 
+	/// values and |1> for the other half). Accepts an input and an output qubit, the output qubit is 
+	/// always changed to the negated state of the input qubit. 
 	///
 	/// # Input
 	/// ## input
@@ -63,7 +71,7 @@
 	/// ## output
 	/// A qubit to be given the Oracle's output state (i.e. f(x)). 
 	/// It is assumed that the qubit has a state of |0> to begin with.
-    operation BalancedNegation (input: Qubit, output: Qubit) : ()
+    operation DeutschBalancedNegation (input: Qubit, output: Qubit) : ()
     {
         body
         {

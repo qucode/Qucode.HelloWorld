@@ -2,6 +2,7 @@
 {
     open Microsoft.Quantum.Primitive;
     open Microsoft.Quantum.Canon;
+	open Quantum.Qucode.HelloWorld.Common;
 
     operation AllocateQubitTest () : ()
     {
